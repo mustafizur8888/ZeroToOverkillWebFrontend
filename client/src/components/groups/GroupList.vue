@@ -3,16 +3,21 @@
     <li v-for="group in groups" v-bind:key="group.id">
       <GroupDetail v-bind:group="group" v-on:update="onUpdate" v-on:remove="onRemove" />
     </li>
+    <li>
+      <CreateGroup v-on:add="onAdd" />
+    </li>
   </ul>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
 import GroupDetail from '@/components/groups/GroupDetail.vue';
+import CreateGroup from '@/components/groups/CreateGroup.vue';
 import { GroupViewModel } from './models';
 @Component({
   components: {
     GroupDetail,
+    CreateGroup,
   },
 })
 export default class GroupList extends Vue {
@@ -22,6 +27,9 @@ export default class GroupList extends Vue {
   }
   private onRemove(groupId: number): void {
     this.$emit('remove', groupId);
+  }
+  private onAdd(group: GroupViewModel): void {
+    this.$emit('add', group);
   }
 }
 </script>

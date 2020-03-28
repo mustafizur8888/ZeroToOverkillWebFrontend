@@ -1,5 +1,5 @@
 <template>
-  <GroupList v-bind:groups="groups" v-on:update="onUpdate" v-on:remove="onRemove" />
+  <GroupList v-bind:groups="groups" v-on:update="onUpdate" v-on:remove="onRemove" v-on:add="onAdd" />
 </template>
 
 <script lang="ts">
@@ -12,10 +12,11 @@ import { GroupViewModel } from '../components/groups/models';
   },
 })
 export default class Group extends Vue {
+  private currentId: number = 0;
   private groups: GroupViewModel[] = [
-    { id: 1, name: 'Smaple Group 1', rowVersion: 'aaa' },
-    { id: 2, name: 'Smaple Group 2', rowVersion: 'bbb' },
-    { id: 3, name: 'Smaple Group 3', rowVersion: 'ccc' },
+    { id: ++this.currentId, name: 'Smaple Group 1', rowVersion: 'aaa' },
+    { id: ++this.currentId, name: 'Smaple Group 2', rowVersion: 'bbb' },
+    { id: ++this.currentId, name: 'Smaple Group 3', rowVersion: 'ccc' },
   ];
   private onUpdate(group: GroupViewModel): void {
     const index = this.groups.findIndex(g => g.id == group.id);
@@ -24,6 +25,10 @@ export default class Group extends Vue {
       group,
       ...this.groups.slice(index + 1, this.groups.length),
     ];
+  }
+  private onAdd(group: GroupViewModel): void {
+    group.id = ++this.currentId;
+    this.groups = [...this.groups, group];
   }
   private onRemove(groupId: number): void {
     this.groups = this.groups.filter(g => g.id != groupId);
