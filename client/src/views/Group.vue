@@ -6,32 +6,32 @@
 import { Component, Vue } from 'vue-property-decorator';
 import GroupList from '@/components/groups/GroupList.vue';
 import { GroupViewModel } from '../components/groups/models';
+import { types } from '../store/modules/groups/actions';
+import { State, namespace } from 'vuex-class';
+
+const groupsModule = namespace('groups');
+
 @Component({
   components: {
     GroupList,
   },
 })
 export default class Group extends Vue {
-  private currentId: number = 0;
-  private groups: GroupViewModel[] = [
-    { id: ++this.currentId, name: 'Smaple Group 1', rowVersion: 'aaa' },
-    { id: ++this.currentId, name: 'Smaple Group 2', rowVersion: 'bbb' },
-    { id: ++this.currentId, name: 'Smaple Group 3', rowVersion: 'ccc' },
-  ];
+  @groupsModule.State('groups')
+  private groups!: GroupViewModel[];
+
+  @groupsModule.Action('') private loadGroups!: () => void;
+  public mounted(): void {
+    this.loadGroups();
+  }
   private onUpdate(group: GroupViewModel): void {
-    const index = this.groups.findIndex(g => g.id == group.id);
-    this.groups = [
-      ...this.groups.slice(0, index),
-      group,
-      ...this.groups.slice(index + 1, this.groups.length),
-    ];
+    this.$store.dispatch(types.UPDATE_GROUP, group);
   }
   private onAdd(group: GroupViewModel): void {
-    group.id = ++this.currentId;
-    this.groups = [...this.groups, group];
+    this.$store.dispatch(types.ADD_GROUP, group);
   }
   private onRemove(groupId: number): void {
-    this.groups = this.groups.filter(g => g.id != groupId);
+    this.$store.dispatch(types.REMOVE_GROUP, groupId);
   }
 }
 </script>
