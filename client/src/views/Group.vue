@@ -20,7 +20,7 @@ export default class Group extends Vue {
   @groupsModule.State('groups')
   private groups!: GroupViewModel[];
 
-  @groupsModule.Action('') private loadGroups!: () => void;
+  @groupsModule.Action('loadGroups') private loadGroups!: () => void;
   public mounted(): void {
     this.loadGroups();
   }
